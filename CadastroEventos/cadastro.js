@@ -1,5 +1,24 @@
-listaEventos =  []
+/*
+Situacao problema:
+-Se o participante for maior de 18 anos, permitir o cadastro; senão, alertar que o cadastro não é permitido pela idade.
+-Listar participantes e palestrantes por evento.
+-Enquanto a quantidade de participantes for inferior a 100, permitir cadastro; senão, alertar que o cadastro não será permitido por ter excedido o limite.
+-Criar fluxograma com todos os requisitos que devem ser atendidos pelo sistema.
 
+Notas ao avaliador :
+O numero maximo e participates foi reduzido para 5 para facilitar a correcao do exercicio
+Assumi que os palestrantes se incluem no numero total de palestrantes
+O meu fluxograma origial tem um menu, para simplificar eu nao coloquei um meno e sim um "auto teste" para facilitar a correcao
+*/ 
+
+//lista de eventos
+listaEventos =  []
+//cosntantes
+const maxPessoasCadastradas = 5
+const idadeMinima = 18
+
+//funcoes auxiliares
+//fornece a data de hoje 
 function dataDeHoje() {
     var hoje = new Date();
     var dd = String(hoje.getDate()).padStart(2, '0');
@@ -9,6 +28,7 @@ function dataDeHoje() {
 }
 
 
+//cria um evento desde que a data seja maior que a de hoje e o evento noa tenha o mesmo nome que outro 
 function  criarEvento(nomeEvento,dataEvento)  {
     let hoje = dataDeHoje()
     let hojePorCampo = hoje.split("/")
@@ -50,24 +70,31 @@ function  criarEvento(nomeEvento,dataEvento)  {
     console.log("Criado evento : '" + evento.nomeEvento + "' em " + evento.dataEvento);
 }
 
+//adiciona  uma pessoa a um evento desde que o nome do evento exista e  a pessoa  tenha idade maior ou igual a 18 anos 
 function adicionarPessoa( cadastrar,nomeEvento)  {
     //checa idade
     let identacao="    "
-    if(cadastrar.Idade < 18 ){
+    if(cadastrar.Idade <= idadeMinima ){
         console.log(`${identacao}Nao foi possivel cadastrar ${cadastrar.Nome} pois o participante eh menor de idade`)
         return
     }  
     //checa se o evento existe
     for (var i = 0; i < listaEventos.length; i++) {
         if ( listaEventos[i].nomeEvento == nomeEvento){
-            if (cadastrar.Palestrante == "sim"){
-                listaEventos[i].listaPalestrantes.push(cadastrar)
-                console.log(`${identacao}Palestrante ${cadastrar.Nome}  cadastrado em evento ${nomeEvento}`)
+            //checa se a quantidade de participantes eh menor do que 100
+            if (( listaEventos[i].listaPalestrantes.length +  listaEventos[i].listaParticipantes.length ) < maxPessoasCadastradas ){
+                if (cadastrar.Palestrante == "sim"){
+                    listaEventos[i].listaPalestrantes.push(cadastrar)
+                    console.log(`${identacao}Palestrante ${cadastrar.Nome}  cadastrado em evento ${nomeEvento}`)
+                }else{
+                    listaEventos[i].listaParticipantes.push(cadastrar)  
+                    console.log(`${identacao}Participante ${cadastrar.Nome}  cadastrado em evento ${nomeEvento}`)
+                }
+                return
             }else{
-                listaEventos[i].listaParticipantes.push(cadastrar)  
-                console.log(`${identacao}Participante ${cadastrar.Nome}  cadastrado em evento ${nomeEvento}`)
+                console.log(`Nao foi possivel cadastrar ${cadastrar.Nome} pois evento:"${nomeEvento}" ja tem ${maxPessoasCadastradas} pessoas cadastradas`)
+                return
             }
-            return
         }
     }  
 
@@ -75,6 +102,7 @@ function adicionarPessoa( cadastrar,nomeEvento)  {
     return          
 }
 
+//imprime todos os eventos palestrantes e participantes 
 function  imprimirEventos ()  {
     for (var i = 0; i < listaEventos.length; i++) {
         console.log("Evento : '" + listaEventos[i].nomeEvento + "' em " + listaEventos[i].dataEvento);
@@ -89,6 +117,7 @@ function  imprimirEventos ()  {
     }          
 }
 
+//forcece um dia aleatorio a partir de um ano base, o dia fornecido pode nao existir de fato no calendario 
 function diaAleatorio(anoBase) {
     diaX = Math.floor(Math.random() * 31)
     mesX = Math.floor(Math.random() * 12)
